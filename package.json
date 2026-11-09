@@ -1,18 +1,48 @@
 {
   "name": "staryu",
-  "module": "index.ts",
+  "version": "0.1.0",
+  "description": "Discover repositories worth starring and organize them into a GitHub list.",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
   "type": "module",
-  "private": true,
+  "private": false,
+  "bin": {
+    "staryu": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
   "scripts": {
-    "typecheck": "bun check",
-    "clean": "rm -rf dist && echo 'Cleaned.'",
     "dev": "bun --watch run src/index.ts",
-    "bundle": "bun build src/index.ts --outdir=dist"
+    "start": "bun run src/index.ts",
+    "build": "rm -rf dist && bun build src/index.ts --target=node --outdir=dist --sourcemap=external",
+    "typecheck": "bun check",
+    "test": "bun test",
+    "prepublishOnly": "bun run build && bun test"
+  },
+  "keywords": [
+    "github",
+    "stars",
+    "cli",
+    "discovery",
+    "open-source"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/9gvrv/staryu.git"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^7"
+    "@clack/prompts": "^1.9.0",
+    "@types/bun": "latest",
+    "@types/node": "^26.6.6",
+    "commander": "^15.1.0",
+    "picocolors": "^1.1.1",
+    "typescript": "^7.0.2"
   }
 }

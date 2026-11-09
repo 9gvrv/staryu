@@ -1,6 +1,19 @@
 
 Default to using Bun instead of Node.js.
 
+## Project-specific exception
+
+`staryu` is published to npm and runs through `npx` on Node. Use `node:sqlite`
+(not `bun:sqlite`) so the bundled CLI works on Node 22.13+ without native
+dependencies. Develop and test with Bun, but always verify the Node bundle:
+
+```bash
+bun check
+bun test
+bun run build
+node dist/index.js --help
+```
+
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
 - Use `bun test` instead of `jest` or `vitest`
 - Use `bun check` instead of `tsc --noEmit`

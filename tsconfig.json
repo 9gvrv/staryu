@@ -7,8 +7,8 @@
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
-    "types": ["bun"],
-    "rootDir": "./src",
+    "types": ["bun", "node"],
+    "rootDir": ".",
     "outDir": "./dist",
 
     // Bundler mode
@@ -20,6 +20,7 @@
     // Best practices
     "strict": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
