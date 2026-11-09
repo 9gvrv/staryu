@@ -9,16 +9,6 @@ named `staryu`.
 - Every discovered candidate is stored in SQLite, so `staryu undo` is safe even
   for repositories you had already starred yourself.
 
-## Requirements
-
-- Node.js **22.13+** (Node 24 recommended). `node:sqlite` is used without an
-  experimental flag from 22.13 onward.
-- Bun is supported as well, but it is not required.
-- A GitHub personal access token.
-
-`npx staryu` runs on Node, so the package uses `node:sqlite` instead of
-`bun:sqlite`. There are no native dependencies.
-
 ## Quick start
 
 ```bash
@@ -40,7 +30,7 @@ npm install -g staryu
 staryu init
 ```
 
-## Commands
+## Usage
 
 | Command | What it does |
 | --- | --- |
@@ -60,6 +50,16 @@ staryu apply --yes             # apply the top N without prompts (explicit opt-i
 staryu undo --yes              # undo without a confirmation prompt
 ```
 
+## Requirements
+
+- Node.js **22.13+** (Node 24 recommended). `node:sqlite` is used without an
+  experimental flag from 22.13 onward.
+- Bun is supported as well, but it is not required.
+- A GitHub personal access token.
+
+`npx staryu` runs on Node, so the package uses `node:sqlite` instead of
+`bun:sqlite`. There are no native dependencies.
+
 ## Token
 
 Create a **classic** personal access token with the `repo` scope (or
@@ -67,6 +67,12 @@ Create a **classic** personal access token with the `repo` scope (or
 GitHub Lists are still a public preview feature. Fine-grained tokens may be
 rejected for starring and list creation or membership updates, so the full
 star + list flow needs a classic token.
+
+Use this pre-filled link to create the right token:
+
+<https://github.com/settings/tokens/new?scopes=repo,user&description=staryu>
+
+`staryu init` prints the same link when it needs a token.
 
 `staryu init` stores the token in a `0600` credentials file. You can bypass the
 saved file with:
