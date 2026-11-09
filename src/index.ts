@@ -1,19 +1,8 @@
-const args = Bun.argv.slice(2);
-const appName = Bun.env.APP_NAME;
-console.log("Arguments recieved: ", args, "\n& App name: ", appName, ".");
+#!/usr/bin/env node
+import { buildCli } from "./cli.ts";
 
-async function getGithubUser(username: string) {
-  const response = await fetch(`https://api.github.com/users/${username}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-  const data = await response.json()
-  console.log(data)
-  return data
+if (process.argv.includes("-d") || process.argv.includes("--debug")) {
+  process.env.STARYU_DEBUG = "1";
 }
-async function main() {
-  const user = await getGithubUser(args[0])
-  console.log(user)
-}
-main()
+
+await buildCli().parseAsync(process.argv);
