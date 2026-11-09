@@ -1,0 +1,72 @@
+import type { EnrichedRepo, GitHubSearchRepo, RepoRecord } from "../types.ts";
+
+export function repoFromSearch(
+  repo: GitHubSearchRepo,
+  overrides: Partial<RepoRecord> = {},
+): RepoRecord {
+  const now = new Date().toISOString();
+  return {
+    id: repo.id,
+    nodeId: repo.node_id,
+    fullName: repo.full_name,
+    owner: repo.owner.login,
+    name: repo.name,
+    htmlUrl: repo.html_url,
+    description: repo.description,
+    language: repo.language,
+    stars: repo.stargazers_count,
+    forks: repo.forks_count,
+    topics: repo.topics ?? [],
+    license: repo.license?.spdx_id ?? repo.license?.name ?? null,
+    pushedAt: repo.pushed_at,
+    createdAt: repo.created_at,
+    updatedAt: repo.updated_at,
+    archived: repo.archived,
+    fork: repo.fork,
+    disabled: repo.disabled ?? false,
+    hasIssues: repo.has_issues ?? true,
+    openIssues: repo.open_issues_count,
+    goodFirstIssues: 0,
+    helpWantedIssues: 0,
+    firstTimersIssues: 0,
+    upForGrabsIssues: 0,
+    contributingGuide: false,
+    recentOutsiderMergedPrs: 0,
+    starredVia: "unknown",
+    listAddedVia: "unknown",
+    firstSeenAt: now,
+    lastSeenAt: now,
+    lastActionAt: null,
+    ...overrides,
+  };
+}
+
+export function mergeEnriched(repo: RepoRecord, enriched: EnrichedRepo): RepoRecord {
+  return {
+    ...repo,
+    id: enriched.id || repo.id,
+    nodeId: enriched.nodeId || repo.nodeId,
+    fullName: enriched.fullName || repo.fullName,
+    htmlUrl: enriched.htmlUrl || repo.htmlUrl,
+    description: enriched.description,
+    language: enriched.language,
+    stars: enriched.stars,
+    forks: enriched.forks,
+    topics: enriched.topics,
+    license: enriched.license,
+    pushedAt: enriched.pushedAt,
+    createdAt: enriched.createdAt,
+    updatedAt: enriched.updatedAt,
+    archived: enriched.archived,
+    fork: enriched.fork,
+    disabled: enriched.disabled,
+    hasIssues: enriched.hasIssues,
+    openIssues: enriched.openIssues,
+    goodFirstIssues: enriched.goodFirstIssues,
+    helpWantedIssues: enriched.helpWantedIssues,
+    firstTimersIssues: enriched.firstTimersIssues,
+    upForGrabsIssues: enriched.upForGrabsIssues,
+    contributingGuide: enriched.contributingGuide,
+    recentOutsiderMergedPrs: enriched.recentOutsiderMergedPrs,
+  };
+}
