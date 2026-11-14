@@ -8,6 +8,15 @@ export function ensure<T>(value: T): Exclude<T, symbol> {
   return value as Exclude<T, symbol>;
 }
 
+/**
+ * Prompts need a real terminal on both ends. When staryu runs from a script,
+ * CI job or piped output, callers should fall back to saved defaults instead
+ * of waiting for input that will never arrive.
+ */
+export function isInteractive(): boolean {
+  return Boolean(process.stdin.isTTY && process.stdout.isTTY);
+}
+
 export interface Progress {
   update: (message: string) => void;
   stop: (message?: string) => void;

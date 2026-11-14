@@ -9,33 +9,12 @@ import { inferProfile } from "../core/profile.ts";
 import { repoFromSearch } from "../core/mapper.ts";
 import { syncStars } from "../core/sync.ts";
 import { UserError, messageOf } from "../core/errors.ts";
+import { cliCommand } from "../core/invocation.ts";
 import { ensure, createProgress, p } from "../ui/prompts.ts";
+import { buildLanguageOptions, nearestActivity } from "./preferences.ts";
 
-const COMMON_LANGUAGES = [
-  "TypeScript",
-  "JavaScript",
-  "Python",
-  "Go",
-  "Rust",
-  "Java",
-  "C++",
-  "C#",
-  "Ruby",
-  "PHP",
-  "Swift",
-  "Kotlin",
-  "Elixir",
-  "Zig",
-  "Lua",
-  "Shell",
-];
-
-function nearestActivity(value: number): number {
-  const options = [90, 180, 365];
-  return options.reduce((best, option) =>
-    Math.abs(option - value) < Math.abs(best - value) ? option : best,
-  );
-}
+export const TOKEN_URL =
+  "https://github.com/settings/tokens/new?scopes=repo,user&description=staryu";
 
 export interface InitOptions {
   force?: boolean;
@@ -64,9 +43,12 @@ export async function initCommand(options: InitOptions = {}): Promise<void> {
 
   let token = getToken();
   if (!token.token) {
+    p.log.info(
+      `No GitHub token found. Create a classic token with the repo and user scopes here:\n${TOKEN_URL}`,
+    );
     const input = ensure(
       await p.password({
-        message: "GitHub personal access token (needs repo/public_repo to star and list access)",
+        message: "Paste the GitHub personal access token",
         validate: (value) => ((value ?? "").trim().length === 0 ? "A token is required." : undefined),
       }),
     );
@@ -131,18 +113,10 @@ export async function initCommand(options: InitOptions = {}): Promise<void> {
 
   const profile = inferProfile(starred);
 
-  const languageChoices = profile.languages.length > 0
-    ? profile.languages.slice(0, 12)
-    : [];
-  const languageOptions = [
-    ...languageChoices.map((language) => ({
-      value: language.name,
-      label: `${language.name} (${language.count})`,
-    })),
-    ...COMMON_LANGUAGES
-      .filter((language) => !languageChoices.some((choice) => choice.name === language))
-      .map((language) => ({ value: language, label: language })),
-  ];
+  const languageOptions = buildLanguageOptions(
+    profile.suggested.languages,
+    profile.languages.slice(0, 12),
+  );
 
   const languages = ensure(
     await p.multiselect({
@@ -286,5 +260,5 @@ export async function initCommand(options: InitOptions = {}): Promise<void> {
     p.log.info(`Account changed from ${existingConfig.github.login} to ${user.login}.`);
   }
 
-  p.outro("Setup complete. Run `staryu discover` to find repositories.");
+  p.outro(`Setup complete. Run \`${cliCommand("discover")}\` to find repositories.`);
 }

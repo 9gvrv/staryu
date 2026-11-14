@@ -35,16 +35,24 @@ staryu init
 | Command | What it does |
 | --- | --- |
 | `staryu init` | Validates your token, fetches your current stars, infers preferences, saves the config, and optionally backfills the `staryu` list. |
-| `staryu discover` | Searches GitHub, filters and enriches candidates, scores them deterministically, and stores them. It does not change anything on GitHub. |
+| `staryu discover` (alias: `staryu explore`) | Asks whether to reuse your saved preferences or customize languages, star range and activity, then searches GitHub, filters and enriches candidates, scores them deterministically, and stores them. It does not change anything on GitHub. |
 | `staryu apply` | Shows stored candidates, lets you pick which ones to star, then stars them and adds them to the `staryu` list. Always asks first unless you pass `--yes`. |
 | `staryu sync` | Adds every starred repository to the `staryu` list. It never unstars and preserves membership in your other lists. |
 | `staryu undo` | Reverses the most recent `apply` run. Only repositories starred *by staryu* are unstared. |
 | `staryu status` | Shows paths, account, list state, rate limit, and database statistics. |
 
+`discover` asks before every interactive run. Choose the saved preferences to
+repeat the last configuration, or customize the languages, star range and
+activity window. Customizations are written back to `config.json`, so the next
+run offers them as the saved option. Non-interactive runs use the saved
+preferences without prompting.
+
 Useful flags:
 
 ```bash
 staryu --debug                 # print GitHub requests
+staryu discover --reuse        # use saved preferences without asking
+staryu discover --customize    # always change preferences before searching
 staryu apply --run 12          # use candidates from a specific discover run
 staryu apply --yes             # apply the top N without prompts (explicit opt-in)
 staryu undo --yes              # undo without a confirmation prompt

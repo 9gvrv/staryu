@@ -2,6 +2,7 @@ import type { GitHubList } from "../types.ts";
 import type { GraphQLApi } from "../github/graphql.ts";
 import type { StaryuConfig } from "./config.ts";
 import { messageOf, UserError } from "./errors.ts";
+import { cliCommand } from "./invocation.ts";
 
 function explainListError(error: unknown): Error {
   const message = messageOf(error);
@@ -10,7 +11,7 @@ function explainListError(error: unknown): Error {
       "GitHub denied access to your lists. GitHub Lists writes currently require a classic " +
         "personal access token with the `repo` (or `public_repo`) and `user` scopes. " +
         "Fine-grained tokens can read lists but are rejected when creating or modifying them. " +
-        "Create a classic token and run `staryu init` again.",
+        `Create a classic token and run \`${cliCommand("init")}\` again.`,
     );
   }
   return error instanceof Error ? error : new Error(message);

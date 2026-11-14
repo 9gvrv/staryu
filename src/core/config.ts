@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { cliCommand } from "./invocation.ts";
 import { ensureDir, getAppPaths } from "./paths.ts";
 
 export interface StaryuConfig {
@@ -282,7 +283,9 @@ export function validateConfig(value: unknown): StaryuConfig {
 export function loadConfig(): StaryuConfig {
   const paths = getAppPaths();
   if (!existsSync(paths.configFile)) {
-    throw new ConfigError(`No config found at ${paths.configFile}. Run \`staryu init\` first.`);
+    throw new ConfigError(
+      `No config found at ${paths.configFile}. Run \`${cliCommand("init")}\` first.`,
+    );
   }
 
   let parsed: unknown;

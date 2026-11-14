@@ -2,6 +2,7 @@ import type { CandidateWithRepo } from "../types.ts";
 import { createRun, finishRun, getCandidates, getLatestRun, getRun } from "../core/db.ts";
 import { applyRepos } from "../core/apply.ts";
 import { messageOf, UserError } from "../core/errors.ts";
+import { cliCommand } from "../core/invocation.ts";
 import { formatNumber, intentLabel, renderCandidates } from "../ui/table.ts";
 import { createProgress, ensure, p } from "../ui/prompts.ts";
 import { loadSetup } from "./shared.ts";
@@ -27,7 +28,9 @@ export async function applyCommand(options: ApplyOptions = {}): Promise<void> {
       ? getRun(db, options.runId)
       : getLatestRun(db, { commands: ["discover"], statuses: ["completed", "partial"] });
     if (!discoverRun) {
-      throw new UserError("No discovery run found. Run `staryu discover` first.");
+      throw new UserError(
+        `No discovery run found. Run \`${cliCommand("discover")}\` first.`,
+      );
     }
     discoverRunId = discoverRun.id;
     candidates = getCandidates(db, discoverRun.id).filter(
@@ -36,7 +39,7 @@ export async function applyCommand(options: ApplyOptions = {}): Promise<void> {
   }
 
   if (!candidates || candidates.length === 0) {
-    p.log.info("No pending candidates. Run `staryu discover` to find more.");
+    p.log.info(`No pending candidates. Run \`${cliCommand("discover")}\` to find more.`);
     p.outro("Nothing to apply.");
     return;
   }
@@ -133,7 +136,7 @@ export async function applyCommand(options: ApplyOptions = {}): Promise<void> {
       p.log.warn(`${failure.repo.fullName}: ${failure.error}`);
     }
 
-    p.log.info(`Run ${runId} recorded. Undo with \`staryu undo\` if needed.`);
+    p.log.info(`Run ${runId} recorded. Undo with \`${cliCommand("undo")}\` if needed.`);
     p.outro("Done.");
   } catch (error) {
     finishRun(db, runId, "failed", { error: messageOf(error) });

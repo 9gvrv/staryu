@@ -5,6 +5,11 @@ import {
   validateConfig,
 } from "../src/core/config.ts";
 import { buildSearchQueries } from "../src/core/search.ts";
+import {
+  applyPreferences,
+  buildLanguageOptions,
+  describePreferences,
+} from "../src/commands/preferences.ts";
 import { filterRepo, scoreRepo } from "../src/core/score.ts";
 import { inferProfile } from "../src/core/profile.ts";
 import { repoFromSearch } from "../src/core/mapper.ts";
@@ -78,6 +83,45 @@ describe("config", () => {
     const config = validateConfig({ github: { list: { name: "mine" } } });
     expect(config.github.list.name).toBe("mine");
     expect(config.github.list.private).toBe(false);
+  });
+});
+
+describe("discovery preferences", () => {
+  test("summarizes the saved preferences", () => {
+    const config = defaultConfig();
+    config.preferences.languages = ["TypeScript", "Go"];
+    expect(describePreferences(config)).toContain("TypeScript, Go");
+    expect(describePreferences(config)).toContain("100–50k stars");
+
+    config.preferences.languages = [];
+    expect(describePreferences(config)).toContain("all languages");
+  });
+
+  test("builds unique language options with the saved choices first", () => {
+    const options = buildLanguageOptions(
+      ["Rust", "TypeScript"],
+      [{ name: "TypeScript", count: 12 }],
+    );
+    expect(options[0]).toEqual({ value: "TypeScript", label: "TypeScript (12)" });
+    expect(options.filter((option) => option.value === "Rust")).toHaveLength(1);
+    expect(options.some((option) => option.value === "Go")).toBe(true);
+  });
+
+  test("applies edits without mutating the saved config", () => {
+    const config = defaultConfig();
+    config.preferences.languages = ["TypeScript"];
+
+    const updated = applyPreferences(config, {
+      languages: ["Go", "Rust"],
+      stars: { min: 50, max: 1_000 },
+      pushedWithinDays: 90,
+    });
+
+    expect(updated.preferences.languages).toEqual(["Go", "Rust"]);
+    expect(updated.preferences.stars).toEqual({ min: 50, max: 1_000 });
+    expect(updated.preferences.activity.pushedWithinDays).toBe(90);
+    expect(config.preferences.languages).toEqual(["TypeScript"]);
+    expect(config.preferences.stars).toEqual({ min: 100, max: 50_000 });
   });
 });
 

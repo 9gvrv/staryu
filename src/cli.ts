@@ -71,11 +71,20 @@ export function buildCli(): Command {
 
   program
     .command("discover")
+    .alias("explore")
     .description("search GitHub and store scored candidates without changing anything")
+    .option("--reuse", "use saved preferences without asking")
+    .option("--customize", "change languages, stars and activity before searching")
     .action(
-      guard(async (_options: unknown, command: Command) => {
-        await discoverCommand({ debug: debugOf(command) });
-      }),
+      guard(
+        async (options: { reuse?: boolean; customize?: boolean }, command: Command) => {
+          await discoverCommand({
+            debug: debugOf(command),
+            reuse: options.reuse,
+            customize: options.customize,
+          });
+        },
+      ),
     );
 
   program

@@ -6,6 +6,7 @@ import { GitHubClient } from "../github/client.ts";
 import { RestApi } from "../github/rest.ts";
 import { GraphQLApi } from "../github/graphql.ts";
 import { messageOf } from "../core/errors.ts";
+import { cliCommand } from "../core/invocation.ts";
 import { p } from "../ui/prompts.ts";
 
 export interface StatusOptions {
@@ -21,7 +22,7 @@ export async function statusCommand(options: StatusOptions = {}): Promise<void> 
   const token = getToken();
 
   const lines: string[] = [
-    `config     ${paths.configFile}${config ? "" : " (missing; run `staryu init`)"}`,
+    `config     ${paths.configFile}${config ? "" : ` (missing; run \`${cliCommand("init")}\`)`}`,
     `database   ${paths.dbFile}`,
     `token      ${token.source === "env" ? `environment (${redactToken(token.token)})` : token.token ? `file (${redactToken(token.token)})` : "(not set)"}`,
     `repos      ${stats.repos} tracked, ${stats.starred} starred, ${stats.listed} in a list`,
