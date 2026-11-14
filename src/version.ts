@@ -1,2 +1,4 @@
-export const VERSION = "0.1.0";
+import packageJson from "../package.json";
+
+export const VERSION = packageJson.version;
 export const USER_AGENT = `staryu/${VERSION}`;
