@@ -1,6 +1,6 @@
 {
   "name": "staryu",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Discover repositories worth starring and organize them into a GitHub list.",
   "module": "dist/index.js",
   "main": "dist/index.js",
